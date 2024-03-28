@@ -15,10 +15,6 @@
   justify-content: center;
 }
 
-.read-the-docs {
-  color: #888;
-}
-
 .table {
   border: 1vh solid seagreen;
   border-radius: 1vh;
@@ -28,4 +24,9 @@
 .cell-button {
   padding: 1.2vh;
   width: 4vw;
+}
+
+.ship-selection {
+  display: flex;
+  justify-content: center;
 }
