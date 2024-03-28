@@ -1,4 +1,21 @@
-const TABLE_SIZE = 10;
+const TABLE_SIZE = 11;
+const rows = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
+
+function tableElementDecider(i, j) {
+  if (i !== 0 && j === 0) {
+    return rows[i - 1];
+  } else if (i === 0 && j !== 0) {
+    return j;
+  } else if (i === 0 && j === 0) {
+    return "/";
+  } else {
+    return ".";
+  }
+}
+
+function buttonClickHandler(team, i, j) {
+  console.log(team, i, j);
+}
 
 function Table(props) {
   return (
@@ -10,10 +27,10 @@ function Table(props) {
               <button
                 className="cell-button"
                 onClick={() => {
-                  console.log(props.team, i, j);
+                  buttonClickHandler(props.team, i, j);
                 }}
               >
-                {i},{j}
+                {tableElementDecider(i, j)}
               </button>
             </div>
           ))}
