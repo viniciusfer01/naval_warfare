@@ -1,0 +1,26 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  padding: 2em;
+  display: flex;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.table {
+  border: 1vh solid seagreen;
+  border-radius: 1vh;
+  margin: 1vh;
+}
