@@ -2,25 +2,35 @@ import "./App.css";
 import Table from "./table";
 import { useState, useEffect, useMemo } from "react";
 
+const id = Math.random();
+
 function App() {
   const [isYourTurn, setIsYourTurn] = useState(false);
   const [isWaiting, setIsWaiting] = useState(true);
-  const socket = useMemo(() => new WebSocket("ws://localhost:8080"), []);
 
   useEffect(() => {
+    const socket = new WebSocket("ws://localhost:8080");
+
     socket.addEventListener("open", (event) => {
-      socket.send("Connection established!");
+      socket.send(JSON.stringify({ type: "connect", id }));
     });
 
     socket.addEventListener("message", (event) => {
       console.log("Message from server: ", event.data);
+      const data = JSON.parse(event.data);
+
+      if (data.type === "start") {
+        setIsWaiting(false);
+      } else if (data.type === "your-turn") {
+        setIsYourTurn(true);
+      }
     });
 
     socket.addEventListener("close", (event) => {
       console.log("Connection closed!");
       setIsWaiting(true);
     });
-  }, [socket]);
+  }, []);
 
   return (
     <>
