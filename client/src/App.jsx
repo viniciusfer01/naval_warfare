@@ -22,6 +22,7 @@ function App() {
   const [isYourTurn, setIsYourTurn] = useState(false);
   const [isWaiting, setIsWaiting] = useState(true);
   const [clickedCell, setClickedCell] = useState(null);
+  const [lastMoveStatus, setLastMoveStatus] = useState(null);
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8080");
@@ -47,6 +48,7 @@ function App() {
         setIsWaiting(false);
       } else if (data.type === "your-turn") {
         setIsYourTurn(true);
+        setLastMoveStatus(null);
       } else if (data.type === "match-ended") {
         setIsWaiting(true);
       } else if (data.type === "move") {
@@ -63,6 +65,10 @@ function App() {
         }
       } else if (data.type === "score") {
         console.log("Received score: ", data.move, data.score);
+        setLastMoveStatus("You Scored");
+      } else if (data.type === "miss") {
+        console.log("Received miss: ", data.move);
+        setLastMoveStatus("You Missed");
       }
     });
 
@@ -79,6 +85,9 @@ function App() {
         <p>Waiting for other players...</p>
       ) : (
         <>
+          {lastMoveStatus && <p>{lastMoveStatus}</p>}
+          {isYourTurn && <p>Your Turn</p>}
+          {!isYourTurn && <p>Waiting for your opponent to make a move...</p>}
           <div className="card">
             <Table team={"yours"} isYourTurn={isYourTurn} board={BOARD} />
             <Table
