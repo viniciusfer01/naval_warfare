@@ -20,12 +20,24 @@ function tableElementDecider(i, j, board, team) {
   }
 }
 
-function buttonClickHandler(team, i, j, isYourTurn, setClickedCell) {
+function buttonClickHandler(
+  team,
+  i,
+  j,
+  isYourTurn,
+  setClickedCell,
+  bombedCells,
+  setBombedCells
+) {
   if (i === 0 || j === 0) {
     return;
   } else if (team === "adversary" && isYourTurn) {
     console.log(`You clicked on the enemy's cell ${rows[i - 1]}${j}`);
 
+    if (bombedCells.find((cell) => cell.i === i && cell.j === j)) {
+      return;
+    }
+    setBombedCells([...bombedCells, { i, j }]);
     setClickedCell({ i, j });
   } else {
     return;
@@ -33,6 +45,8 @@ function buttonClickHandler(team, i, j, isYourTurn, setClickedCell) {
 }
 
 function Table(props) {
+  const [bombedCells, setBombedCells] = useState([]);
+
   return (
     <div className="table">
       {Array.from({ length: TABLE_SIZE }).map((_, i) => (
@@ -40,6 +54,13 @@ function Table(props) {
           {Array.from({ length: TABLE_SIZE }).map((_, j) => (
             <div key={j} className="cell">
               <button
+                style={{
+                  backgroundColor: bombedCells.find(
+                    (cell) => cell.i === i && cell.j === j
+                  )
+                    ? "red"
+                    : "#1a1a1a",
+                }}
                 className="cell-button"
                 onClick={() => {
                   buttonClickHandler(
@@ -47,7 +68,9 @@ function Table(props) {
                     i,
                     j,
                     props.isYourTurn,
-                    props.setClickedCell
+                    props.setClickedCell,
+                    bombedCells,
+                    setBombedCells
                   );
                 }}
               >
