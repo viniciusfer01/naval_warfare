@@ -66,11 +66,21 @@ wss.on("connection", function connection(ws) {
       ];
 
       if (currentPlayer.score > 31) {
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: "match-ended" }));
-          }
-        });
+        currentPlayer.ws.send(JSON.stringify({ type: "winner" }));
+
+        players
+          .find((player) => player.id !== currentPlayer.id)
+          .ws.send(JSON.stringify({ type: "loser" }));
+
+        setTimeout(() => {
+          wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify({ type: "match-ended" }));
+            }
+          });
+
+          isMatchStarted = false;
+        }, 5000);
       }
 
       // Switch to the other player

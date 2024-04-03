@@ -69,6 +69,12 @@ function App() {
       } else if (data.type === "miss") {
         console.log("Received miss: ", data.move);
         setLastMoveStatus("You Missed");
+      } else if (data.type === "winner") {
+        console.log("you won!");
+        setLastMoveStatus("You Won! to play again, refresh the page.");
+      } else if (data.type === "loser") {
+        console.log("you lost!");
+        setLastMoveStatus("You Lost... to play again, refresh the page.");
       }
     });
 
