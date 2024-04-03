@@ -23,6 +23,7 @@ function App() {
   const [isWaiting, setIsWaiting] = useState(true);
   const [clickedCell, setClickedCell] = useState(null);
   const [lastMoveStatus, setLastMoveStatus] = useState(null);
+  const [lastMatchStatus, setLastMatchStatus] = useState(null);
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8080");
@@ -46,6 +47,7 @@ function App() {
 
       if (data.type === "start") {
         setIsWaiting(false);
+        setLastMatchStatus(null);
       } else if (data.type === "your-turn") {
         setIsYourTurn(true);
         setLastMoveStatus(null);
@@ -71,10 +73,10 @@ function App() {
         setLastMoveStatus("You Missed");
       } else if (data.type === "winner") {
         console.log("you won!");
-        setLastMoveStatus("You Won! to play again, refresh the page.");
+        setLastMatchStatus("You Won! to play again, refresh the page.");
       } else if (data.type === "loser") {
         console.log("you lost!");
-        setLastMoveStatus("You Lost... to play again, refresh the page.");
+        setLastMatchStatus("You Lost... to play again, refresh the page.");
       }
     });
 
@@ -87,6 +89,7 @@ function App() {
   return (
     <>
       <h1>Batalha Naval</h1>
+      {lastMatchStatus && <p>{lastMatchStatus}</p>}
       {isWaiting ? (
         <p>Waiting for other players...</p>
       ) : (

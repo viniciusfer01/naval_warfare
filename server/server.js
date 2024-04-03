@@ -5,6 +5,7 @@ const wss = new WebSocket.Server({ port: 8080 });
 let players = [];
 isMatchStarted = false;
 let currentPlayer = null;
+const MAX_SCORE = 31;
 
 wss.on("connection", function connection(ws) {
   console.log("A new client connected!");
@@ -65,27 +66,34 @@ wss.on("connection", function connection(ws) {
         currentPlayer,
       ];
 
-      if (currentPlayer.score > 31) {
+      if (currentPlayer.score > MAX_SCORE) {
         currentPlayer.ws.send(JSON.stringify({ type: "winner" }));
-
+        ws.close();
         players
           .find((player) => player.id !== currentPlayer.id)
           .ws.send(JSON.stringify({ type: "loser" }));
 
-        setTimeout(() => {
-          wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: "match-ended" }));
-            }
-          });
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ type: "match-ended" }));
+          }
 
-          isMatchStarted = false;
-        }, 5000);
+          // disconnect the players
+          client.terminate();
+        });
+
+        currentPlayer = null;
+        players = [];
+        isMatchStarted = false;
+
+        // disconnect the players
+      } else {
+        // Switch to the other player
+        currentPlayer = players.find(
+          (player) => player.id !== currentPlayer.id
+        );
+        currentPlayer.ws.send(JSON.stringify({ type: "your-turn" }));
       }
-
-      // Switch to the other player
-      currentPlayer = players.find((player) => player.id !== currentPlayer.id);
-      currentPlayer.ws.send(JSON.stringify({ type: "your-turn" }));
     } else if (type === "miss") {
       currentPlayer.ws.send(JSON.stringify({ type: "miss", move: move }));
 
